@@ -1,31 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Xml;
+using ClassLibrary1;  
 
-namespace GuestManager
+namespace GuestManagerApp
 {
     internal class Program
     {
-        static List<string> guests = new List<string>();
-
-        static void Main()
+        static void Main() 
         {
             Console.WriteLine("Welcome Ma'am, Sir!");
 
             while (true)
-            {// Viewing sections of the actions
+            {
                 DisplayActions();
                 int userInput = GetUserInput();
 
                 switch (userInput)
                 {
                     case 1:
-                        RegisterGuest();
+                        RegisterGuestUI();
                         break;
                     case 2:
-                        ViewGuests();
+                        ViewGuestsUI();
                         break;
                     case 3:
-                        RemoveGuest();
+                        RemoveGuestUI();
                         break;
                     case 4:
                         Exit();
@@ -38,7 +37,7 @@ namespace GuestManager
         }
 
         static void DisplayActions()
-        {//DISPLAY SECTION OF ACTIONS 
+        {
             Console.WriteLine("-------------------");
             Console.WriteLine("GUEST MANAGER MENU");
             Console.WriteLine("[1] Register Guest");
@@ -51,34 +50,35 @@ namespace GuestManager
         {
             Console.Write("Enter Action: ");
             if (int.TryParse(Console.ReadLine(), out int userInput))
-            {//TO CHECK FOR ANY ERROR OR UNEXPECTED ERROR
+            {
                 return userInput;
             }
             return 0;
         }
 
-        static void RegisterGuest()
+        static void RegisterGuestUI()
         {
             Console.Write("Enter guest name: ");
             string guestName = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(guestName))
             {
-                guests.Add(guestName);
+                DATAPROCESSING.RegisterGuest(guestName);
                 Console.WriteLine("Guest successfully registered! Welcome!");
-            }//CONFRMATION UPPON ENTERIG FIRST REGISTERING
+            }
             else
             {
                 Console.WriteLine("Invalid name. Please try again.");
             }
         }
 
-        static void ViewGuests()
+        static void ViewGuestsUI()
         {
+            var guests = DATAPROCESSING.GetGuestList();
             Console.WriteLine("List of Guests:");
             if (guests.Count == 0)
             {
                 Console.WriteLine("No guests registered yet.");
-            }//VIEWING SECTION
+            }
             else
             {
                 foreach (var guest in guests)
@@ -88,16 +88,16 @@ namespace GuestManager
             }
         }
 
-        static void RemoveGuest()
+        static void RemoveGuestUI()
         {
             Console.Write("Enter guest name to remove: ");
             string nameToRemove = Console.ReadLine();
-            if (guests.Remove(nameToRemove))
+            if (DATAPROCESSING.RemoveGuest(nameToRemove))
             {
                 Console.WriteLine("Guest removed successfully.");
             }
             else
-            {//REMOVING BEFORE LEAVING
+            {
                 Console.WriteLine("Guest not found.");
             }
         }
